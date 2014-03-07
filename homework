@@ -1,0 +1,6 @@
+1. Active record objects infer their attributes from the database
+2. you can acces attributes before they enter the table
+3. Validates is a shortcut to all defeault validators 
+4. You can create custom validators by overriding the deafults
+5. Regex is a common standard across many platforms
+6. Reqex is just confusing until its not
