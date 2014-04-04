@@ -28,12 +28,7 @@ describe "Authentication" do
     
     describe "with valid information" do
       let(:user) { FactoryGirl.create(:user) }
-      before do
-        #fill_in "Email",    with: user.email.upcase
-        #fill_in "Password", with: user.password
-        #click_button "Sign in"
-        valid_signin(user)
-      end
+      before {sign_in user }
 
       it { should have_title(user.name) }
       it { should have_link('Users',       href: users_path) }
@@ -45,6 +40,10 @@ describe "Authentication" do
       describe "followed by signout" do
         before { click_link "Sign out" }
         it { should have_link( 'Sign in' ) }
+        it { should_not have_link('Users',       href: users_path) }
+        it { should_not have_link('Profile',     href: user_path(user)) }
+        it { should_not have_link('Settings',    href: edit_user_path(user) )}
+        it { should_not have_link('Sign out',    href: signout_path) }
       end
     end
   end
@@ -85,6 +84,20 @@ describe "Authentication" do
           it "should render the desired protected page" do
             expect(page).to have_title('Edit user')
           end
+          
+          describe "when signing in again" do
+            before do
+                click_link "Sign out"
+                visit signin_path
+                fill_in "Email",    with: user.email
+                fill_in "Password", with: user.password
+                click_button "Sign in"
+            end
+
+            it "should render the default (profile) page" do
+              expect(page).to have_title(user.name)
+            end
+          end        
         end
       end
     end
@@ -117,5 +130,19 @@ describe "Authentication" do
         specify { expect(response).to redirect_to(root_url) }
       end
     end
+    
+    #describe "as admin user" do
+     # let(:user) { FactoryGirl.create(:user) }
+      #let(:admin) { FactoryGirl.create(:user) }
+
+      #before { sign_in admin, no_capybara: true }
+
+     # describe "submitting a DELETE request to the Users#destroy action" do
+      #  before { delete user_path(user) }
+       # it "should render the default (profile) page" do
+        #  expect(page).to have_title(user.name)
+        #end
+        #end
+    #end
   end
 end
